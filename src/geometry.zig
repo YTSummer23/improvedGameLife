@@ -7,9 +7,9 @@ const sin = m.sin; const cos = m.cos;
 
 pub fn rotate(v2f: Vector2f, c: Vector2f, rad: f32) Vector2f {
     return Vector2f {
-        .x = (v2f.x + (c.x + v2f.x) * cos(rad) - (c.x + v2f.x) * sin(rad)),
-        .y = (v2f.y + (c.y + v2f.y) * sin(rad) + (c.y - v2f.y) * cos(rad)),
-        };
+        .x = (c.x + (v2f.x - c.x) * cos(rad) - (v2f.y - c.y) * sin(rad)),
+        .y = (c.y + (v2f.x - c.x) * sin(rad) + (v2f.y - c.y) * cos(rad)),
+    };
 }
 
 pub fn equate(v2f1: *Vector2f, v2f2: Vector2f) void {
@@ -17,11 +17,24 @@ pub fn equate(v2f1: *Vector2f, v2f2: Vector2f) void {
     v2f1.*.y = v2f2.y; 
 }
 
+test "equate" {
+    var a = Vector2f {
+        .x = 0,
+        .y = 0.5
+    };
+    const b = Vector2f {
+        .x = 2,
+        .y = 2
+    };
+    equate(&a, b);
+    print("\na.x: {}\na.y: {}\n", .{a.x, a.y});
+}
+
 test "rotate" {
     var a = Vector2f {
         .x = 0,
         .y = 1
     };
-    equate(&a, rotate(a, .{.x=0, .y=0}, m.pi));
-    print("a.x: {}\na.y: {}\n", .{a.x, a.y});
+    equate(&a, rotate(a, .{.x=0, .y=0}, @as(f32, m.pi)));
+    print("\na.x: {}\na.y: {}\n", .{a.x, a.y});
 }

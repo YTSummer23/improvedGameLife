@@ -4,9 +4,9 @@ pub fn build(b: *Builder) void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
-    const exe = b.addExecutable("sfml", "src/main.zig");
+    const exe = b.addExecutable("theGame", "src/main.zig");
     exe.linkLibC();
-    exe.addPackagePath("theGame", "sfml-wrapper/src/sfml/sfml.zig");
+    exe.addPackagePath("sfml", "zig-sfml-wrapper/src/sfml/sfml.zig");
     exe.linkSystemLibrary("csfml-graphics");
     exe.linkSystemLibrary("csfml-system");
     exe.linkSystemLibrary("csfml-window");
@@ -18,4 +18,11 @@ pub fn build(b: *Builder) void {
 
     const run_step = b.step("run", "Run the game");
     run_step.dependOn(&exe.run().step);
+
+    const test_geometry = b.addTest("src/geometry.zig");
+    test_geometry.addPackagePath("sfml", "zig-sfml-wrapper/src/sfml/sfml.zig");
+    test_geometry.linkSystemLibrary("csfml-system");
+    test_geometry.addIncludeDir("csfml/include/");
+    const test_geometry_step = b.step("test-geometry", "Tests geometry.zig file");
+    test_geometry_step.dependOn(&test_geometry.step);
 }

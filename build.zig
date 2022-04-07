@@ -14,6 +14,7 @@ pub fn build(b: *Builder) void {
     exe.addIncludeDir("csfml/include/"); // Not always necessary
     exe.setTarget(target);
     exe.setBuildMode(mode);
+    exe.emit_docs = .emit;
     exe.install();
 
     const run_step = b.step("run", "Run the game");
@@ -23,6 +24,7 @@ pub fn build(b: *Builder) void {
     test_geometry.addPackagePath("sfml", "zig-sfml-wrapper/src/sfml/sfml.zig");
     test_geometry.linkSystemLibrary("csfml-system");
     test_geometry.addIncludeDir("csfml/include/");
+    test_geometry.emit_docs = .emit;
     const test_geometry_step = b.step("test-geometry", "Tests geometry.zig file");
     test_geometry_step.dependOn(&test_geometry.step);
 }

@@ -24,7 +24,13 @@ pub fn build(b: *Builder) void {
     test_geometry.addPackagePath("sfml", "zig-sfml-wrapper/src/sfml/sfml.zig");
     test_geometry.linkSystemLibrary("csfml-system");
     test_geometry.addIncludeDir("csfml/include/");
-    test_geometry.emit_docs = .emit;
     const test_geometry_step = b.step("test-geometry", "Tests geometry.zig file");
     test_geometry_step.dependOn(&test_geometry.step);
+
+    const test_cell = b.addTest("src/cell.zig");
+    test_cell.addPackagePath("sfml", "zig-sfml-wrapper/src/sfml/sfml.zig");
+    test_cell.linkSystemLibrary("csfml-system");
+    test_cell.addIncludeDir("csfml/include/");
+    const test_cell_step = b.step("test-cell", "Tests cell.zig file");
+    test_cell_step.dependOn(&test_cell.step);
 }

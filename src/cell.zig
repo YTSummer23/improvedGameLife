@@ -13,6 +13,9 @@ const TypeCell = enum { moving, transfering, sharp, bone };
 const Cell = struct {
     type_c: TypeCell,
     coords: [4]Vector2f,
+    speed: f32,
+    rotated: f32 = 0.0,
+    const rotate_speed: f32 = (m.pi / 120.0);
 
     pub fn rotateCell(self: *Cell, rad: f32) void {
         const cx = m.fabs(self.coords[0].x - self.coords[2].x);
@@ -30,8 +33,11 @@ const Cell = struct {
         }
     }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
-        const one = @as(f32, 1);
-        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + one, .y = coord.y }, .{ .x = coord.x + one, .y = coord.y + one }, .{ .x = coord.x, .y = coord.y + one } } };
+        const a_speed: f32 = switch (type_cell) {
+            TypeCell.moving => 60.0,
+            else => 0.0,
+        };
+        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed };
     }
 };
 
@@ -49,6 +55,6 @@ test "init a cell" {
 test "moveCell" {
     var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
     cell.moveCell(.{ .x = 1, .y = 1 });
-    try expect(cell.coords[0].x == @as(f32, 2));
+    try expect(cell.coords[0].x == 2.0);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
 }

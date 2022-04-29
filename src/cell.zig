@@ -18,6 +18,7 @@ const Cell = struct {
     coords: [4]Vector2f,
     speed: f32,
     rotated: f32 = 0.0,
+    energy: u32,
     const rotate_speed: f32 = (m.pi / 120.0);
 
     pub fn rotateCell(self: *Cell, clockwise: bool) void {
@@ -64,6 +65,7 @@ test "moveCell" {
     while (i < 60) : (i += 1) {
         cell.moveCell();
     }
-    //try expect(cell.coords[0].x == 2.0);
+    try expect(cell.coords[0].x > 1.9);
+    try expect(cell.coords[0].x < 2.1);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
 }

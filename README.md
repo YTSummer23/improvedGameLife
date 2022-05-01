@@ -1,10 +1,18 @@
 # A lives of the cells
 
-## Description
 This project is an attempt to make kind of simulation of evolution. Not real one, though.
 Some basic geometry with vectors is done so far. `struct Cell` is almost described .
 
-## TODO
+##How to build
+
+To build the program, just type `zig build` in your cmd
+
+##How to test
+
+* To test geomtry.zig, type `zig build test-geometry`
+* To test cell.zig, type `zig build test-cell`
+
+### TODO
 
 * Make cell division mechanism.
 * Make AI for a cell.

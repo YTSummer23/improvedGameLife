@@ -3,11 +3,11 @@
 This project is an attempt to make kind of simulation of evolution. Not real one, though.
 Some basic geometry with vectors is done so far. `struct Cell` is almost described .
 
-##How to build
+## How to build
 
 To build the program, just type `zig build` in your cmd
 
-##How to test
+## How to test
 
 * To test geomtry.zig, type `zig build test-geometry`
 * To test cell.zig, type `zig build test-cell`

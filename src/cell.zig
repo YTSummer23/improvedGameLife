@@ -58,7 +58,7 @@ const Cell = struct {
             TypeCell.moving => (1.0 / 60.0),
             else => 0.0,
         };
-        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed };
+        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed, .energy = 1000 };
     }
 };
 

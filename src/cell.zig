@@ -53,12 +53,18 @@ const Cell = struct {
             g.equate(&self.coords[i], self.coords[i].add(delta));
         }
     }
+    pub fn division(self: *Cell) [2]Cell {
+        self.energy -= 75;
+        const first_cell = undefined;
+        const second_cell = undefined;
+        return [2]Cell{ first_cell, second_cell };
+    }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
         const a_speed: f32 = switch (type_cell) {
             TypeCell.moving => (1.0 / 60.0),
             else => 0.0,
         };
-        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed, .energy = 1000 };
+        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed, .energy = 100 };
     }
 };
 
@@ -82,4 +88,15 @@ test "moveCell" {
     try expect(cell.coords[0].x > 1.9);
     try expect(cell.coords[0].x < 2.1);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
+}
+
+test "rotateCell" {
+    var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
+    var k: u8 = 0;
+    while (k < 60) : (k += 1) {
+        cell.rotateCell(true);
+    }
+    for (cell.coords) |i, index_i| {
+        print("cell.coord[{}]: x:{}, y:{}\n", .{ index_i, i.x, i.y });
+    }
 }

@@ -29,42 +29,28 @@ const TypeCell = enum { moving, transfering, sharp, bone };
 ///This struct describes a cell...
 const Cell = struct {
     type_c: TypeCell,
-    coords: [4]Vector2f,
+    ///coords[0] is point of first corner. coords[1] is center
+    coords: [2]Vector2f,
     speed: f32,
-    rotated: f32 = 0.0,
     energy: u32,
+    rotated: f32 = 0.0,
     const rotate_speed: f32 = (m.pi / 120.0);
 
     pub fn rotateCell(self: *Cell, clockwise: bool) void {
-        const cx = m.fabs(self.coords[0].x - self.coords[2].x);
-        const cy = m.fabs(self.coords[0].y - self.coords[2].y);
-        const c = Vector2f{ .x = cx, .y = cy };
-        var i: u8 = 0;
         const delta_rs = if (clockwise) -rotate_speed else rotate_speed;
         self.rotated += delta_rs;
-        while (i < 4) : (i += 1) {
-            g.equate(&self.coords[i], g.rotate(self.coords[i], c, delta_rs));
-        }
+        g.equate(&self.coords[0], g.rotate(self.coords[0], self.coords[1], delta_rs));
     }
     pub fn moveCell(self: *Cell) void {
-        var i: u8 = 0;
         const delta = g.stv(self.rotated, self.speed);
-        while (i < 4) : (i += 1) {
+        var i: u8 = 0;
+        while (i < 2) : (i += 1) {
             g.equate(&self.coords[i], self.coords[i].add(delta));
         }
     }
-    pub fn division(self: *Cell) [2]Cell {
-        self.energy -= 75;
-        const first_cell = undefined;
-        const second_cell = undefined;
-        return [2]Cell{ first_cell, second_cell };
-    }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
-        const a_speed: f32 = switch (type_cell) {
-            TypeCell.moving => (1.0 / 60.0),
-            else => 0.0,
-        };
-        return .{ .type_c = type_cell, .coords = .{ .{ .x = coord.x, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y }, .{ .x = coord.x + 1.0, .y = coord.y + 1.0 }, .{ .x = coord.x, .y = coord.y + 1.0 } }, .speed = a_speed, .energy = 100 };
+        const temp_speed: f32 = if (type_cell == TypeCell.moving) (1 / 60) else (1 / 120);
+        return .{ .type_c = type_cell, .coords = .{ coord, coord.add(.{ .x = 0.5, .y = 0.5 }) }, .speed = temp_speed, .energy = 100 };
     }
 };
 
@@ -73,10 +59,10 @@ const Multicellular = struct {};
 
 test "init a cell" {
     const cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
+    print("\ncoords[0].x: {}\ncoords[1].y: {}\ntype_c: {}\n", .{ cell.coords[0].x, cell.coords[1].y, cell.type_c });
     try expect(cell.coords[0].x == 1);
-    try expect(cell.coords[2].y == 2);
+    try expect(cell.coords[1].y == 1.5);
     try expect(cell.type_c == TypeCell.moving);
-    print("\ncoords[1].x: {}\ncoords[2].y: {}\ntype_c: {}\n", .{ cell.coords[1].x, cell.coords[2].y, cell.type_c });
 }
 
 test "moveCell" {
@@ -85,18 +71,16 @@ test "moveCell" {
     while (i < 60) : (i += 1) {
         cell.moveCell();
     }
-    try expect(cell.coords[0].x > 1.9);
-    try expect(cell.coords[0].x < 2.1);
+    try expect(cell.coords[0].x > 0.9);
+    try expect(cell.coords[0].x < 1.1);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
 }
-
 test "rotateCell" {
     var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
-    var k: u8 = 0;
-    while (k < 60) : (k += 1) {
+    var i: u8 = 0;
+    while (i < 60) : (i += 1) {
         cell.rotateCell(true);
     }
-    for (cell.coords) |i, index_i| {
-        print("cell.coord[{}]: x:{}, y:{}\n", .{ index_i, i.x, i.y });
-    }
+    print("coords[0]: x:{}, y:{}\ncoords[1]: x:{}, y:{}\n", .{ cell.coords[0].x, cell.coords[0].y, cell.coords[1].x, cell.coords[1].y });
+    print("rotated: {}\n", .{cell.rotated});
 }

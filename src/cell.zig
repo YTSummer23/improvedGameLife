@@ -39,14 +39,21 @@ const Cell = struct {
     pub fn rotateCell(self: *Cell, clockwise: bool) void {
         const delta_rs = if (clockwise) -rotate_speed else rotate_speed;
         self.rotated += delta_rs;
-        g.equate(&self.coords[0], g.rotate(self.coords[0], self.coords[1], delta_rs));
+        self.coords[0] = g.rotate(self.coords[0], self.coords[1], delta_rs);
     }
     pub fn moveCell(self: *Cell) void {
         const delta = g.stv(self.rotated, self.speed);
         var i: u8 = 0;
         while (i < 2) : (i += 1) {
-            g.equate(&self.coords[i], self.coords[i].add(delta));
+            self.coords[i] = self.coords[i].add(delta);
         }
+    }
+    pub fn divisionCell(self: *Cell) Cell {
+        self.energy -= 20;
+        self.energy /= 2;
+        self.coords[0] = Vector2f.add(self.coords[0], g.stv((self.rotated + m.pi / 2.0), -0.5));
+        self.coords[1] = Vector2f.add(self.coords[1], g.stv((self.rotated + m.pi / 2.0), -0.5));
+        return .{ .type_c = self.type_c, .coords = .{ Vector2f.add(self.coords[0], g.stv(self.rotated, 1)), Vector2f.add(self.coords[1], g.stv(self.rotated, 1)) }, .speed = self.speed, .energy = self.energy, .rotated = self.rotated };
     }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
         const temp_speed: f32 = if (type_cell == TypeCell.moving) (1 / 60) else (1 / 120);
@@ -75,6 +82,7 @@ test "moveCell" {
     try expect(cell.coords[0].x < 1.1);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
 }
+
 test "rotateCell" {
     var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
     var i: u8 = 0;
@@ -83,4 +91,11 @@ test "rotateCell" {
     }
     print("coords[0]: x:{}, y:{}\ncoords[1]: x:{}, y:{}\n", .{ cell.coords[0].x, cell.coords[0].y, cell.coords[1].x, cell.coords[1].y });
     print("rotated: {}\n", .{cell.rotated});
+}
+
+test "divisionCell" {
+    var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
+    var cell2: Cell = cell.divisionCell();
+    print("coords[0]: .x:{}, .y:{}\n", .{ cell2.coords[0].x, cell2.coords[0].y });
+    print("coords[1]: .x:{}, .y:{}\n", .{ cell2.coords[1].x, cell2.coords[1].y });
 }

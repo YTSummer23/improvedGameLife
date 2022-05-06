@@ -30,12 +30,7 @@ pub fn rotate(v2f: Vector2f, c: Vector2f, rad: f32) Vector2f {
     };
 }
 
-///equates two Vector2's
-pub fn equate(v2f1: *Vector2f, v2f2: Vector2f) void {
-    v2f1.*.x = v2f2.x;
-    v2f1.*.y = v2f2.y;
-}
-
+///convert scalar value into vector one using known angle.
 pub fn scalarToVector(rad: f32, scalar: f32) Vector2f {
     return .{
         .x = cos(rad) * scalar,
@@ -43,15 +38,8 @@ pub fn scalarToVector(rad: f32, scalar: f32) Vector2f {
     };
 }
 
-test "equate" {
-    var a = Vector2f{ .x = 0, .y = 0.5 };
-    const b = Vector2f{ .x = 2, .y = 2 };
-    equate(&a, b);
-    print("\na.x: {}\na.y: {}\n", .{ a.x, a.y });
-}
-
 test "rotate" {
     var a = Vector2f{ .x = 0, .y = 1 };
-    equate(&a, rotate(a, .{ .x = 0, .y = 0 }, m.pi / 2.0));
+    a = rotate(a, .{ .x = 0, .y = 0 }, m.pi / 2.0);
     print("\na.x: {}\na.y: {}\n", .{ a.x, a.y });
 }

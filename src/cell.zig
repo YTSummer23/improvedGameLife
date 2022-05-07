@@ -49,9 +49,10 @@ const Cell = struct {
     pub fn divisionCell(self: *Cell) Cell {
         self.energy -= 20;
         self.energy /= 2;
-        self.coords[0] = self.coords[0].add(g.stv((self.rotated + m.pi / 2.0), -0.5));
-        self.coords[1] = self.coords[1].add(g.stv((self.rotated + m.pi / 2.0), -0.5));
-        return .{ .type_c = self.type_c, .coords = .{ Vector2f.add(self.coords[0], g.stv(self.rotated, 1)), Vector2f.add(self.coords[1], g.stv(self.rotated, 1)) }, .speed = self.speed, .energy = self.energy, .rotated = self.rotated };
+        const direction_of_division = self.rotated + m.pi / 2.0;
+        self.coords[0] = self.coords[0].add(g.stv(direction_of_division, -0.5));
+        self.coords[1] = self.coords[1].add(g.stv(direction_of_division, -0.5));
+        return .{ .type_c = self.type_c, .coords = .{ self.coords[0].add(g.stv(direction_of_division, 1)), self.coords[1].add(g.stv(direction_of_division, 1)) }, .speed = self.speed, .energy = self.energy, .rotated = self.rotated };
     }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
         const temp_speed: f32 = if (type_cell == TypeCell.moving) (1.0 / 60.0) else (1.0 / 120.0);
@@ -96,8 +97,9 @@ test "rotateCell" {
 test "divisionCell" {
     var cell: Cell = Cell.init(.{ .x = 1, .y = 1 }, TypeCell.moving);
     var cell2: Cell = cell.divisionCell();
-    print("coords[0]: .x:{}, .y:{}\n", .{ cell2.coords[0].x, cell2.coords[0].y });
-    print("coords[1]: .x:{}, .y:{}\n", .{ cell2.coords[1].x, cell2.coords[1].y });
+    print("cell2.coords[0]: .x:{}, .y:{}\n", .{ cell2.coords[0].x, cell2.coords[0].y });
+    print("cell2.coords[1]: .x:{}, .y:{}\n", .{ cell2.coords[1].x, cell2.coords[1].y });
     try expect(cell.coords[0].x == 1);
-    try expect(cell2.coords[0].x == 1);
+    try expect(cell2.coords[0].x < 1.1);
+    try expect(cell2.coords[0].x > 0.9);
 }

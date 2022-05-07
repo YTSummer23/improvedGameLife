@@ -42,21 +42,19 @@ const Cell = struct {
         self.coords[0] = g.rotate(self.coords[0], self.coords[1], delta_rs);
     }
     pub fn moveCell(self: *Cell) void {
-        const delta = g.stv(self.rotated, self.speed);
-        var i: u8 = 0;
-        while (i < 2) : (i += 1) {
-            self.coords[i] = self.coords[i].add(delta);
-        }
+        const delta: Vector2f = g.stv(self.rotated, self.speed);
+        self.coords[0] = self.coords[0].add(delta);
+        self.coords[1] = self.coords[1].add(delta);
     }
     pub fn divisionCell(self: *Cell) Cell {
         self.energy -= 20;
         self.energy /= 2;
-        self.coords[0] = Vector2f.add(self.coords[0], g.stv((self.rotated + m.pi / 2.0), -0.5));
-        self.coords[1] = Vector2f.add(self.coords[1], g.stv((self.rotated + m.pi / 2.0), -0.5));
+        self.coords[0] = self.coords[0].add(g.stv((self.rotated + m.pi / 2.0), -0.5));
+        self.coords[1] = self.coords[1].add(g.stv((self.rotated + m.pi / 2.0), -0.5));
         return .{ .type_c = self.type_c, .coords = .{ Vector2f.add(self.coords[0], g.stv(self.rotated, 1)), Vector2f.add(self.coords[1], g.stv(self.rotated, 1)) }, .speed = self.speed, .energy = self.energy, .rotated = self.rotated };
     }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
-        const temp_speed: f32 = if (type_cell == TypeCell.moving) (1 / 60) else (1 / 120);
+        const temp_speed: f32 = if (type_cell == TypeCell.moving) (1.0 / 60.0) else (1.0 / 120.0);
         return .{ .type_c = type_cell, .coords = .{ coord, coord.add(.{ .x = 0.5, .y = 0.5 }) }, .speed = temp_speed, .energy = 100 };
     }
 };
@@ -70,6 +68,7 @@ test "init a cell" {
     try expect(cell.coords[0].x == 1);
     try expect(cell.coords[1].y == 1.5);
     try expect(cell.type_c == TypeCell.moving);
+    try expect(cell.speed == (1.0 / 60.0));
 }
 
 test "moveCell" {
@@ -78,9 +77,10 @@ test "moveCell" {
     while (i < 60) : (i += 1) {
         cell.moveCell();
     }
-    try expect(cell.coords[0].x > 0.9);
-    try expect(cell.coords[0].x < 1.1);
     print("\ncell.coords[0].x: {}\n", .{cell.coords[0].x});
+    print("\ncell.coords[0].y: {}\n", .{cell.coords[0].y});
+    try expect(cell.coords[0].x > 1.9);
+    try expect(cell.coords[0].x < 2.1);
 }
 
 test "rotateCell" {
@@ -98,4 +98,6 @@ test "divisionCell" {
     var cell2: Cell = cell.divisionCell();
     print("coords[0]: .x:{}, .y:{}\n", .{ cell2.coords[0].x, cell2.coords[0].y });
     print("coords[1]: .x:{}, .y:{}\n", .{ cell2.coords[1].x, cell2.coords[1].y });
+    try expect(cell.coords[0].x == 1);
+    try expect(cell2.coords[0].x == 1);
 }

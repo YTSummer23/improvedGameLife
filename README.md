@@ -14,7 +14,8 @@ To build the program, just type `zig build` in your cmd
 
 ### TODO
 
-* Make cell division mechanism.
+* ~~Make cell division mechanism.~~ (Completed)
+* Make eating mechanism.
 * Make AI for a cell.
 * Make graphic. I'll use sfml.
 * Describe `struct Multicellular`. And make game mechanics for it.

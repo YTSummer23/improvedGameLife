@@ -18,8 +18,7 @@ const g = struct {
     usingnamespace @import("geometry.zig");
     const stv = g.scalarToVector;
 };
-const sf = @import("sfml");
-const Vector2f = sf.system.Vector2f;
+const Vector2f = g.Vector2f;
 const expect = std.testing.expect;
 const print = std.debug.print;
 
@@ -31,10 +30,10 @@ const Cell = struct {
     type_c: TypeCell,
     ///coords[0] is point of first corner. coords[1] is center
     coords: [2]Vector2f,
-    speed: f32,
+    speed: f64,
     energy: u32,
-    rotated: f32 = 0.0,
-    const rotate_speed: f32 = (m.pi / 120.0);
+    rotated: f64 = 0.0,
+    const rotate_speed: f64 = (m.pi / 120.0);
 
     pub fn rotateCell(self: *Cell, clockwise: bool) void {
         const delta_rs = if (clockwise) -rotate_speed else rotate_speed;
@@ -54,8 +53,11 @@ const Cell = struct {
         self.coords[1] = self.coords[1].add(g.stv(direction_of_division, -0.5));
         return .{ .type_c = self.type_c, .coords = .{ self.coords[0].add(g.stv(direction_of_division, 1)), self.coords[1].add(g.stv(direction_of_division, 1)) }, .speed = self.speed, .energy = self.energy, .rotated = self.rotated };
     }
+    pub fn eatSomething(self: *Cell) void {
+        _ = self;
+    }
     pub fn init(coord: Vector2f, type_cell: TypeCell) Cell {
-        const temp_speed: f32 = if (type_cell == TypeCell.moving) (1.0 / 60.0) else (1.0 / 120.0);
+        const temp_speed: f64 = if (type_cell == TypeCell.moving) (1.0 / 60.0) else (1.0 / 120.0);
         return .{ .type_c = type_cell, .coords = .{ coord, coord.add(.{ .x = 0.5, .y = 0.5 }) }, .speed = temp_speed, .energy = 100 };
     }
 };

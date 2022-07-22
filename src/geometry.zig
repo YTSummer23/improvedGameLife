@@ -16,14 +16,23 @@
 //!such as rotating and equating two Vector2's
 const std = @import("std");
 const m = std.math;
-const sf = @import("sfml");
 const print = std.debug.print;
-const Vector2f = sf.system.Vector2f;
 const sin = m.sin;
 const cos = m.cos;
 
+pub const Vector2f = struct {
+    x: f64,
+    y: f64,
+    pub fn add(self: Vector2f, other: Vector2f) Vector2f {
+        return .{ .x = self.x + other.x, .y = self.y + other.y };
+    }
+    pub fn scale(self: Vector2f, scalar: f64) Vector2f {
+        return .{ .x = self.x * scalar, .y = self.y * scalar };
+    }
+};
+
 ///rotates first point(v2f) around second(c) one by rad radians
-pub fn rotate(v2f: Vector2f, c: Vector2f, rad: f32) Vector2f {
+pub fn rotate(v2f: Vector2f, c: Vector2f, rad: f64) Vector2f {
     return Vector2f{
         .x = (c.x + (v2f.x - c.x) * cos(rad) - (v2f.y - c.y) * sin(rad)),
         .y = (c.y + (v2f.x - c.x) * sin(rad) + (v2f.y - c.y) * cos(rad)),
@@ -31,7 +40,7 @@ pub fn rotate(v2f: Vector2f, c: Vector2f, rad: f32) Vector2f {
 }
 
 ///convert scalar value into vector one using known angle.
-pub fn scalarToVector(rad: f32, scalar: f32) Vector2f {
+pub fn scalarToVector(rad: f64, scalar: f64) Vector2f {
     return .{
         .x = cos(rad) * scalar,
         .y = sin(rad) * scalar,

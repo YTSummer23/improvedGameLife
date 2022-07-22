@@ -13,7 +13,6 @@
 //limitations under the License.
 
 const std = @import("std");
-const sf = @import("sfml");
 pub const g = @import("geometry.zig");
 
 pub fn main() !void {
